@@ -18,6 +18,16 @@ var Generator = module.exports = function Generator() {
   this.cameledName = this._.camelize(this.name);
   this.classedName = this._.classify(this.name);
 
+    if(this._.str.include(this.name, '/')) {
+        //clean the name for all slashes and only take the name to the right of the last slash
+        var cleanedName = this._.strRightBack(this.name, '/');
+        this.cameledName =  this._.camelize(cleanedName);
+        //Make the cameledName classified.
+        this.cameledName = this._.classify(this.cameledName);
+
+        this.classedName = angularUtils.replaceSlashesWithDots(this.name);
+    }
+
   if (typeof this.env.options.appPath === 'undefined') {
     try {
       this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
@@ -97,7 +107,8 @@ Generator.prototype.addScriptToIndex = function (script) {
       file: fullPath,
       needle: '<!-- endbuild -->',
       splicable: [
-        '<script src="scripts/' + script.replace('\\', '/') + '.js"></script>'
+          //replace backslash with slash...
+        '<script src="scripts/' + script.replace(/\\/g, '/') + '.js"></script>'
       ]
     });
   } catch (e) {
@@ -106,10 +117,6 @@ Generator.prototype.addScriptToIndex = function (script) {
 };
 
 Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate, targetDirectory, skipAdd) {
-  // Services use classified names
-  if (this.generatorName.toLowerCase() === 'service') {
-    this.cameledName = this.classedName;
-  }
 
   this.appTemplate(appTemplate, path.join('scripts', targetDirectory, this.name));
   this.testTemplate(testTemplate, path.join(targetDirectory, this.name));

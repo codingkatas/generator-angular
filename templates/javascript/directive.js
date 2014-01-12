@@ -1,7 +1,6 @@
 'use strict';
 
-angular.module('<%= scriptAppName %>')
-  .directive('<%= cameledName %>', function () {
+<%= scriptAppName %>.directive('<%= cameledName %>', function () {
     return {
       template: '<div></div>',
       restrict: 'E',

@@ -1,4 +1,3 @@
 'use strict';
 
-angular.module('<%= scriptAppName %>')
-  .value('<%= cameledName %>', 42);
+<%= scriptAppName %>.value('<%= cameledName %>', 42);

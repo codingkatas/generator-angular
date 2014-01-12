@@ -6,7 +6,9 @@ var fs = require('fs');
 module.exports = {
   rewrite: rewrite,
   rewriteFile: rewriteFile,
-  appName: appName
+  appName: appName,
+  replaceSlashesWithDots: replaceSlashesWithDots
+
 };
 
 function rewriteFile (args) {
@@ -71,4 +73,9 @@ function appName (self) {
     suffix = 'App';
   }
   return suffix ? self._.classify(suffix) : '';
+}
+
+//Replace all slashes '/' with dots
+function replaceSlashesWithDots(name) {
+    return name.replace(/\//g, '.');
 }
