@@ -42,6 +42,14 @@ var Generator = module.exports = function Generator() {
     this.env.options.testPath = this.env.options.testPath || 'test/spec';
   }
 
+    //Test if script module name is set. Use this for the script files otherwise, just use the name of the app
+    if (typeof this.env.options.scriptModuleName === 'undefined') {
+        try {
+            this.env.options.scriptModuleName = require(path.join(process.cwd(), 'bower.json')).scriptModuleName;
+        } catch (e) {}
+        this.env.options.scriptModuleName = this.env.options.scriptModuleName || this.name.toLowerCase();
+    }
+
   this.env.options.coffee = this.options.coffee;
   if (typeof this.env.options.coffee === 'undefined') {
     this.option('coffee');
@@ -117,10 +125,10 @@ Generator.prototype.addScriptToIndex = function (script) {
 };
 
 Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate, targetDirectory, skipAdd) {
-
-  this.appTemplate(appTemplate, path.join('scripts', targetDirectory, this.name));
-  this.testTemplate(testTemplate, path.join(targetDirectory, this.name));
+  var dir = this.env.options.scriptModuleName + '/' + targetDirectory;
+  this.appTemplate(appTemplate, path.join('scripts', dir, this.name));
+  this.testTemplate(testTemplate, path.join(dir, this.name));
   if (!skipAdd) {
-    this.addScriptToIndex(path.join(targetDirectory, this.name));
+    this.addScriptToIndex(path.join(dir, this.name));
   }
 };
