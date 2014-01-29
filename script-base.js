@@ -13,7 +13,15 @@ var Generator = module.exports = function Generator() {
     this.appname = path.basename(process.cwd());
   }
   this.appname = this._.slugify(this._.humanize(this.appname));
-  this.scriptAppName = this._.camelize(this.appname) + angularUtils.appName(this);
+
+    if (typeof this.env.options.appNameSuffix === 'undefined') {
+        try {
+            this.env.options.appNameSuffix = require(path.join(process.cwd(), 'bower.json')).appNameSuffix;
+        } catch (e) {
+            this.env.options.appNameSuffix = angularUtils.appName(this);
+        }
+    }
+  this.scriptAppName = this._.camelize(this.appname) + this.env.options.appNameSuffix;
 
   this.cameledName = this._.camelize(this.name);
   this.classedName = this._.classify(this.name);
@@ -42,14 +50,6 @@ var Generator = module.exports = function Generator() {
     this.env.options.testPath = this.env.options.testPath || 'test/spec';
   }
 
-    //Test if script module name is set. Use this for the script files otherwise, just use the name of the app
-    if (typeof this.env.options.scriptModuleName === 'undefined') {
-        try {
-            this.env.options.scriptModuleName = require(path.join(process.cwd(), 'bower.json')).scriptModuleName;
-        } catch (e) {}
-        this.env.options.scriptModuleName = this.env.options.scriptModuleName || this.name.toLowerCase();
-    }
-
   this.env.options.coffee = this.options.coffee;
   if (typeof this.env.options.coffee === 'undefined') {
     this.option('coffee');
@@ -57,7 +57,7 @@ var Generator = module.exports = function Generator() {
     // attempt to detect if user is using CS or not
     // if cml arg provided, use that; else look for the existence of cs
     if (!this.options.coffee &&
-      this.expandFiles(path.join(this.env.options.appPath, '/scripts/**/*.coffee'), {}).length > 0) {
+      this.expandFiles(path.join(this.env.options.appPath, this.appname, '/scripts/**/*.coffee'), {}).length > 0) {
       this.options.coffee = true;
     }
 
@@ -81,22 +81,38 @@ var Generator = module.exports = function Generator() {
     sourceRoot += '-min';
   }
 
+  this.scriptsPath = 'scripts';
+  this.viewsPath = 'views';
+  this.fileNameSuffix = '';
+
   this.sourceRoot(path.join(__dirname, sourceRoot));
 };
 
 util.inherits(Generator, yeoman.generators.NamedBase);
 
+Generator.prototype.generatedSourceFilePath = function(dest) {
+    return this.generatedFilePath(this.env.options.appPath, dest);
+}
+
+Generator.prototype.generatedTestFilePath = function(dest) {
+    return this.generatedFilePath(this.env.options.testPath, dest);
+}
+
+Generator.prototype.generatedFilePath = function(appPath, dest) {
+    return path.join(appPath, dest.toLowerCase()) + this.fileNameSuffix + this.scriptSuffix;
+}
+
 Generator.prototype.appTemplate = function (src, dest) {
   yeoman.generators.Base.prototype.template.apply(this, [
     src + this.scriptSuffix,
-    path.join(this.env.options.appPath, dest.toLowerCase()) + this.scriptSuffix
+    this.generatedSourceFilePath(dest)
   ]);
 };
 
 Generator.prototype.testTemplate = function (src, dest) {
   yeoman.generators.Base.prototype.template.apply(this, [
     src + this.scriptSuffix,
-    path.join(this.env.options.testPath, dest.toLowerCase()) + this.scriptSuffix
+    this.generatedTestFilePath(dest)
   ]);
 };
 
@@ -110,10 +126,12 @@ Generator.prototype.htmlTemplate = function (src, dest) {
 Generator.prototype.addScriptToIndex = function (script) {
   try {
     var appPath = this.env.options.appPath;
-    var fullPath = path.join(appPath, 'index.html');
+    var appName = this.appname;
+    var viewsPath = this.viewsPath;
+    var fullPath = path.join(appPath, appName, viewsPath, 'index.html');
     angularUtils.rewriteFile({
       file: fullPath,
-      needle: '<!-- endbuild -->',
+      needle: '<!-- endbuild, this is where yeoman generated components are automatically placed. DO NOT EDIT. -->',
       splicable: [
           //replace backslash with slash...
         '<script src="scripts/' + script.replace(/\\/g, '/') + '.js"></script>'
@@ -125,10 +143,10 @@ Generator.prototype.addScriptToIndex = function (script) {
 };
 
 Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate, targetDirectory, skipAdd) {
-  var dir = this.env.options.scriptModuleName + '/' + targetDirectory;
-  this.appTemplate(appTemplate, path.join('scripts', dir, this.name));
-  this.testTemplate(testTemplate, path.join(dir, this.name));
+  var dir = path.join(this._.camelize(this.appname), this.scriptsPath, targetDirectory, this.name);
+  this.appTemplate(appTemplate, dir);
+  this.testTemplate(testTemplate, dir);
   if (!skipAdd) {
-    this.addScriptToIndex(path.join(dir, this.name));
+    this.addScriptToIndex(dir);
   }
 };
