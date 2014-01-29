@@ -23,6 +23,7 @@ Generator.prototype.createViewFiles = function createViewFiles() {
     'common/view.html',
     path.join(
       this.env.options.appPath,
+      this.appname,
       'views',
       this.name.toLowerCase() + '.html'
     )
