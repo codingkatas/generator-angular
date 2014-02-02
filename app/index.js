@@ -1,4 +1,3 @@
-'use strict';
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -11,26 +10,16 @@ var wiredep = require('wiredep');
 var Generator = module.exports = function Generator(args, options) {
   yeoman.generators.Base.apply(this, arguments);
   this.argument('appname', { type: String, required: false });
-  this.appname = this.appname || path.basename(process.cwd());
-  this.appname = this._.camelize(this._.slugify(this._.humanize(this.appname)));
 
-  this.option('app-suffix', {
-    desc: 'Allow a custom suffix to be added to the module name',
-    type: String,
-    required: 'false'
-  });
-  this.scriptAppName = this.appname + angularUtils.appName(this);
-
-  args = ['main'];
-
-  if (typeof this.env.options.appPath === 'undefined') {
+  if (typeof this.appname === 'undefined') {
     try {
-      this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
+      this.appname = require(path.join(process.cwd(), 'bower.json')).name;
     } catch (e) {}
-    this.env.options.appPath = this.env.options.appPath || 'app';
   }
 
-  this.appPath = this.env.options.appPath;
+  this.appSuffix = "Module";
+
+  args = ['main'];
 
   if (typeof this.env.options.coffee === 'undefined') {
     this.option('coffee', {
@@ -40,19 +29,33 @@ var Generator = module.exports = function Generator(args, options) {
     // attempt to detect if user is using CS or not
     // if cml arg provided, use that; else look for the existence of cs
     if (!this.options.coffee &&
-      this.expandFiles(path.join(this.appPath, '/scripts/**/*.coffee'), {}).length > 0) {
+      this.expandFiles(path.join(this.appPath || '', '/scripts/**/*.coffee'), {}).length > 0) {
       this.options.coffee = true;
     }
 
     this.env.options.coffee = this.options.coffee;
   }
 
-  if (typeof this.env.options.minsafe === 'undefined') {
-    this.option('minsafe', {
-      desc: 'Generate AngularJS minification safe code'
-    });
-    this.env.options.minsafe = this.options.minsafe;
-    args.push('--minsafe');
+  this.initializeApp = function(appName) {
+    this.appname = this._.camelize(this._.slugify(this._.humanize(appName)));
+    this.scriptAppName = this.appname + this.appSuffix;
+    if (typeof this.env.options.appPath === 'undefined') {
+      try {
+        this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
+      } catch (e) {
+      }
+      this.env.options.appPath = this.env.options.appPath || this.appname;
+    }
+
+    this.appPath = this.env.options.appPath;
+
+    if (typeof this.env.options.minsafe === 'undefined') {
+      this.option('minsafe', {
+        desc: 'Generate AngularJS minification safe code'
+      });
+      this.env.options.minsafe = this.options.minsafe;
+      args.push('--minsafe');
+    }
   }
 
   this.hookFor('angular:common', {
@@ -126,6 +129,27 @@ Generator.prototype.welcome = function welcome() {
         'https://github.com/yeoman/generator-angular#minification-safe. **\n'
       );
     }
+  }
+};
+
+Generator.prototype.requireAppName = function askForAppName() {
+  if (typeof this.appname === 'undefined') {
+    var cb = this.async();
+
+    this.prompt([
+      {
+        type: 'input',
+        name: 'appname',
+        message: 'Please enter the module name:'
+      }
+    ], function (props) {
+      if (!props.appname) {
+        this.requireAppName();
+      } else {
+        this.initializeApp(props.appname);
+        cb();
+      }
+    }.bind(this));
   }
 };
 

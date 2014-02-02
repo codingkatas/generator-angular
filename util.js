@@ -6,9 +6,8 @@ var fs = require('fs');
 module.exports = {
   rewrite: rewrite,
   rewriteFile: rewriteFile,
-  appName: appName,
-  replaceSlashesWithDots: replaceSlashesWithDots
-
+  replaceSlashesWithDots: replaceSlashesWithDots,
+  appName: appName
 };
 
 function rewriteFile (args) {
@@ -61,21 +60,22 @@ function rewrite (args) {
   return lines.join('\n');
 }
 
-function appName (self) {
-  var counter = 0, suffix = self.options['app-suffix'];
-  // Have to check this because of generator bug #386
-  process.argv.forEach(function(val) {
-    if (val.indexOf('--app-suffix') > -1) {
-      counter++;
-    }
-  });
-  if (counter === 0 || (typeof suffix === 'boolean' && suffix)) {
-    suffix = 'App';
-  }
-  return suffix ? self._.classify(suffix) : '';
-}
-
 //Replace all slashes '/' with dots
 function replaceSlashesWithDots(name) {
     return name.replace(/\//g, '.');
+}
+
+function appName(self) {
+  var cb = self.async();
+
+  self.prompt([{
+    type: 'input',
+    name: 'appname',
+    message: 'Please enter the module name:'
+  }], function (props) {
+    self.appname = props.appname;
+
+    cb();
+    return;
+  }.bind(self));
 }

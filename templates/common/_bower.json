@@ -1,7 +1,7 @@
 {
   "name": "<%= _.slugify(_.humanize(appname)) %>",
   "version": "0.0.0",
-  "appPath": "src/main/webapp/modules",
+  "appPath": "<%= appPath %>",
   "testPath": "src/test/webapp/modules",
   "appNameSuffix": "Module",
   "dependencies": {

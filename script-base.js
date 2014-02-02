@@ -18,7 +18,7 @@ var Generator = module.exports = function Generator() {
         try {
             this.env.options.appNameSuffix = require(path.join(process.cwd(), 'bower.json')).appNameSuffix;
         } catch (e) {
-            this.env.options.appNameSuffix = angularUtils.appName(this);
+            this.env.options.appNameSuffix = "";
         }
     }
   this.scriptAppName = this._.camelize(this.appname) + this.env.options.appNameSuffix;
