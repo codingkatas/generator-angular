@@ -17,7 +17,7 @@ Generator.prototype.rewriteAppJs = function () {
   var coffee = this.env.options.coffee;
   var config = {
     file: path.join(
-      this.env.options.appPath,
+      this.appname,
       'scripts/app.' + (coffee ? 'coffee' : 'js')
     ),
     needle: '.otherwise',

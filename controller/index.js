@@ -13,7 +13,6 @@ var Generator = module.exports = function Generator() {
   }
 
   this.fileNameSuffix = 'Ctrl';
-
 };
 
 util.inherits(Generator, ScriptBase);

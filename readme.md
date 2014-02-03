@@ -283,20 +283,6 @@ All of these can be updated with `bower update` as new versions of AngularJS are
 ## Configuration
 Yeoman generated projects can be further tweaked according to your needs by modifying project files appropriately.
 
-### Output
-You can change the `app` directory by adding a `appPath` property to `bower.json`. For instance, if you wanted to easily integrate with Express.js, you could add the following:
-
-```json
-{
-  "name": "yo-test",
-  "version": "0.0.0",
-  ...
-  "appPath": "public"
-}
-
-```
-This will cause Yeoman-generated client-side files to be placed in `public`.
-
 ## Testing
 
 Running `grunt test` will run the unit tests with karma.

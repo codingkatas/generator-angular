@@ -17,8 +17,6 @@ var Generator = module.exports = function Generator(args, options) {
     } catch (e) {}
   }
 
-  this.appSuffix = "Module";
-
   args = ['main'];
 
   if (typeof this.env.options.coffee === 'undefined') {
@@ -29,25 +27,16 @@ var Generator = module.exports = function Generator(args, options) {
     // attempt to detect if user is using CS or not
     // if cml arg provided, use that; else look for the existence of cs
     if (!this.options.coffee &&
-      this.expandFiles(path.join(this.appPath || '', '/scripts/**/*.coffee'), {}).length > 0) {
+      this.expandFiles(path.join(this.appname || '', '/scripts/**/*.coffee'), {}).length > 0) {
       this.options.coffee = true;
     }
 
     this.env.options.coffee = this.options.coffee;
   }
 
-  this.initializeApp = function(appName) {
+  this._initializeApp = function(appName) {
     this.appname = this._.camelize(this._.slugify(this._.humanize(appName)));
-    this.scriptAppName = this.appname + this.appSuffix;
-    if (typeof this.env.options.appPath === 'undefined') {
-      try {
-        this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
-      } catch (e) {
-      }
-      this.env.options.appPath = this.env.options.appPath || this.appname;
-    }
-
-    this.appPath = this.env.options.appPath;
+    this.scriptModuleName = this.appname + "Module";
 
     if (typeof this.env.options.minsafe === 'undefined') {
       this.option('minsafe', {
@@ -56,7 +45,25 @@ var Generator = module.exports = function Generator(args, options) {
       this.env.options.minsafe = this.options.minsafe;
       args.push('--minsafe');
     }
+    this._appendModule();
   }
+
+  this._appendModule = function() {
+    try {
+      this.modules = require(path.join(process.cwd(), 'generatedModules.json')).modules;
+    } catch (e) {
+    }
+    this.modules = this.modules || {};
+    var modulePath = this.modules[this.appName];
+    if (modulePath && fs.existsSync(modulePath)) {
+      // TODO prompt here
+    } else {
+      this.modules[this.appname] = "/" + this.appname;
+    }
+    console.log(this.modules);
+    this.modulesAsJSON = JSON.stringify(this.modules);
+  }
+
 
   this.hookFor('angular:common', {
     args: args
@@ -133,7 +140,7 @@ Generator.prototype.welcome = function welcome() {
 };
 
 Generator.prototype.requireAppName = function askForAppName() {
-  if (typeof this.appname === 'undefined') {
+  if (typeof this.appname === 'undefined' || !this.appname) {
     var cb = this.async();
 
     this.prompt([
@@ -146,10 +153,12 @@ Generator.prototype.requireAppName = function askForAppName() {
       if (!props.appname) {
         this.requireAppName();
       } else {
-        this.initializeApp(props.appname);
+        this._initializeApp(props.appname);
         cb();
       }
     }.bind(this));
+  } else {
+    this._initializeApp(this.appname);
   }
 };
 
@@ -261,13 +270,13 @@ Generator.prototype.bootstrapFiles = function bootstrapFiles() {
   var mainFile = 'main.' + (sass ? 's' : '') + 'css';
 
   if (this.bootstrap && !sass) {
-    this.copy('fonts/glyphicons-halflings-regular.eot', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.eot'));
-    this.copy('fonts/glyphicons-halflings-regular.ttf', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.ttf'));
-    this.copy('fonts/glyphicons-halflings-regular.svg', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.svg'));
-    this.copy('fonts/glyphicons-halflings-regular.woff', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.woff'));
+    this.copy('fonts/glyphicons-halflings-regular.eot', path.join(this.appname, 'fonts/glyphicons-halflings-regular.eot'));
+    this.copy('fonts/glyphicons-halflings-regular.ttf', path.join(this.appname, 'fonts/glyphicons-halflings-regular.ttf'));
+    this.copy('fonts/glyphicons-halflings-regular.svg', path.join(this.appname, 'fonts/glyphicons-halflings-regular.svg'));
+    this.copy('fonts/glyphicons-halflings-regular.woff', path.join(this.appname, 'fonts/glyphicons-halflings-regular.woff'));
   }
 
-  this.copy('styles/' + mainFile, this.appPath + '/styles/' + mainFile);
+  this.copy('styles/' + mainFile, this.appname + '/styles/' + mainFile);
 };
 
 Generator.prototype.appJs = function appJs() {
@@ -282,11 +291,12 @@ Generator.prototype.appJs = function appJs() {
 
 Generator.prototype.createIndexHtml = function createIndexHtml() {
   this.indexFile = this.indexFile.replace(/&apos;/g, "'");
-  this.write(path.join(this.appPath, 'index.html'), this.indexFile);
+  this.write(path.join(this.appname, 'index.html'), this.indexFile);
 };
 
 Generator.prototype.packageFiles = function () {
   this.coffee = this.env.options.coffee;
+  this.template('../../templates/common/generatedModules.json', 'generatedModules.json');
   this.template('../../templates/common/_bower.json', 'bower.json');
   this.template('../../templates/common/_package.json', 'package.json');
   this.template('../../templates/common/Gruntfile.js', 'Gruntfile.js');
@@ -294,7 +304,7 @@ Generator.prototype.packageFiles = function () {
 
 Generator.prototype.imageFiles = function () {
   this.sourceRoot(path.join(__dirname, 'templates'));
-  this.directory('images', 'app/images', true);
+  this.directory('images', path.join(this.appname, 'images'), true);
 };
 
 Generator.prototype._injectDependencies = function _injectDependencies() {
@@ -307,11 +317,19 @@ Generator.prototype._injectDependencies = function _injectDependencies() {
   if (this.options['skip-install']) {
     console.log(howToInstall);
   } else {
+    var x = {
+      directory: 'scripts',
+      bowerJson: JSON.stringify(fs.readFileSync('./bower.json')),
+      ignorePath: this.appname + '/',
+      htmlFile: path.join(this.appname, 'index.html'),
+      cssPattern: '<link rel="stylesheet" href="{{filePath}}">'
+    }
+    console.log(x);
     wiredep({
-      directory: 'app/bower_components',
+      directory: 'scripts',
       bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
-      ignorePath: 'app/',
-      htmlFile: 'app/index.html',
+      ignorePath: this.appname + '/',
+      htmlFile: this.appname + '/index.html',
       cssPattern: '<link rel="stylesheet" href="{{filePath}}">'
     });
   }

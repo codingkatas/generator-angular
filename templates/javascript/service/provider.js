@@ -1,6 +1,6 @@
 'use strict';
 
-<%= scriptAppName %>.provider('<%= cameledName %>', function () {
+<%= scriptModuleName %>.provider('<%= cameledName %>', function () {
 
     // Private variables
     var salutation = 'Hello';

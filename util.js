@@ -7,7 +7,7 @@ module.exports = {
   rewrite: rewrite,
   rewriteFile: rewriteFile,
   replaceSlashesWithDots: replaceSlashesWithDots,
-  appName: appName
+  replaceDotsWithSlashes: replaceDotsWithSlashes
 };
 
 function rewriteFile (args) {
@@ -65,17 +65,8 @@ function replaceSlashesWithDots(name) {
     return name.replace(/\//g, '.');
 }
 
-function appName(self) {
-  var cb = self.async();
-
-  self.prompt([{
-    type: 'input',
-    name: 'appname',
-    message: 'Please enter the module name:'
-  }], function (props) {
-    self.appname = props.appname;
-
-    cb();
-    return;
-  }.bind(self));
+//Replace all dots '/' with slashes
+function replaceDotsWithSlashes(name) {
+  return name.replace(/\./g, '/');
 }
+

@@ -21,26 +21,19 @@ var Generator = module.exports = function Generator() {
             this.env.options.appNameSuffix = "";
         }
     }
-  this.scriptAppName = this._.camelize(this.appname) + this.env.options.appNameSuffix;
+  this.scriptModuleName = this._.camelize(this.appname) + this.env.options.appNameSuffix;
 
   this.cameledName = this._.camelize(this.name);
   this.classedName = this._.classify(this.name);
 
-    if(this._.str.include(this.name, '/')) {
-        //clean the name for all slashes and only take the name to the right of the last slash
-        var cleanedName = this._.strRightBack(this.name, '/');
-        this.cameledName =  this._.camelize(cleanedName);
-        //Make the cameledName classified.
-        this.cameledName = this._.classify(this.cameledName);
+  if (this._.str.include(this.name, '/')) {
+    //clean the name for all slashes and only take the name to the right of the last slash
+    var cleanedName = this._.strRightBack(this.name, '/');
+    this.cameledName = this._.camelize(cleanedName);
+    //Make the cameledName classified.
+    this.cameledName = this._.classify(this.cameledName);
 
-        this.classedName = angularUtils.replaceSlashesWithDots(this.name);
-    }
-
-  if (typeof this.env.options.appPath === 'undefined') {
-    try {
-      this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
-    } catch (e) {}
-    this.env.options.appPath = this.env.options.appPath || 'app';
+    this.classedName = angularUtils.replaceSlashesWithDots(this.name);
   }
 
   if (typeof this.env.options.testPath === 'undefined') {
@@ -57,7 +50,7 @@ var Generator = module.exports = function Generator() {
     // attempt to detect if user is using CS or not
     // if cml arg provided, use that; else look for the existence of cs
     if (!this.options.coffee &&
-      this.expandFiles(path.join(this.env.options.appPath, this.appname, '/scripts/**/*.coffee'), {}).length > 0) {
+      this.expandFiles(path.join(this.appname, '/scripts/**/*.coffee'), {}).length > 0) {
       this.options.coffee = true;
     }
 
@@ -91,11 +84,11 @@ var Generator = module.exports = function Generator() {
 util.inherits(Generator, yeoman.generators.NamedBase);
 
 Generator.prototype.generatedSourceFilePath = function(dest) {
-    return this.generatedFilePath(this.appPath, dest);
+    return this.generatedFilePath(this.appname, dest);
 }
 
 Generator.prototype.generatedTestFilePath = function(dest) {
-    return this.generatedFilePath(this.appPath, dest);
+    return this.generatedFilePath(this.appname, dest);
 }
 
 Generator.prototype.generatedFilePath = function(appPath, dest) {
@@ -119,16 +112,15 @@ Generator.prototype.testTemplate = function (src, dest) {
 Generator.prototype.htmlTemplate = function (src, dest) {
   yeoman.generators.Base.prototype.template.apply(this, [
     src,
-    path.join(this.env.options.appPath, dest.toLowerCase())
+    path.join(this.appName, dest.toLowerCase())
   ]);
 };
 
 Generator.prototype.addScriptToIndex = function (script) {
   try {
-    var appPath = this.env.options.appPath;
     var appName = this.appname;
     var viewsPath = this.viewsPath;
-    var fullPath = path.join(appPath, appName, viewsPath, 'index.html');
+    var fullPath = path.join(appName, viewsPath, 'index.html');
     angularUtils.rewriteFile({
       file: fullPath,
       needle: '<!-- endbuild, this is where yeoman generated components are automatically placed. DO NOT EDIT. -->',

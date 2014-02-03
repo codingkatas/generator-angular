@@ -278,8 +278,6 @@
 
   * Remove `process.cwd()` from CS detection (3a707f4)
 
-  * use this.env.options.appPath (404c752)
-
   * use `installDependencies()` method (8369d9a)
 
   * invoke karma:app with `skip-install` option if defined (7e47dc2)

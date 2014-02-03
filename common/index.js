@@ -17,7 +17,6 @@ Generator.prototype.setupEnv = function setupEnv() {
 
   // TODO ignore common files for NOW (in templates/common/root)
   this.sourceRoot(path.join(__dirname, '../templates/common'));
-  // this.directory('root', '.', true);
-  // this.directory('root', this.appPath, true);
+  this.directory('root', '.', true);
   this.copy('gitignore', '.gitignore');
 };
