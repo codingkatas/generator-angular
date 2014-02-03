@@ -261,13 +261,13 @@ Generator.prototype.bootstrapFiles = function bootstrapFiles() {
   var mainFile = 'main.' + (sass ? 's' : '') + 'css';
 
   if (this.bootstrap && !sass) {
-    this.copy('fonts/glyphicons-halflings-regular.eot', 'app/fonts/glyphicons-halflings-regular.eot');
-    this.copy('fonts/glyphicons-halflings-regular.ttf', 'app/fonts/glyphicons-halflings-regular.ttf');
-    this.copy('fonts/glyphicons-halflings-regular.svg', 'app/fonts/glyphicons-halflings-regular.svg');
-    this.copy('fonts/glyphicons-halflings-regular.woff', 'app/fonts/glyphicons-halflings-regular.woff');
+    this.copy('fonts/glyphicons-halflings-regular.eot', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.eot'));
+    this.copy('fonts/glyphicons-halflings-regular.ttf', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.ttf'));
+    this.copy('fonts/glyphicons-halflings-regular.svg', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.svg'));
+    this.copy('fonts/glyphicons-halflings-regular.woff', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.woff'));
   }
 
-  this.copy('styles/' + mainFile, 'app/styles/' + mainFile);
+  this.copy('styles/' + mainFile, this.appPath + '/styles/' + mainFile);
 };
 
 Generator.prototype.appJs = function appJs() {

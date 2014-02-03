@@ -13,7 +13,11 @@ util.inherits(Generator, yeoman.generators.Base);
 Generator.prototype.setupEnv = function setupEnv() {
   // Copies the contents of the generator `templates`
   // directory into your users new application path
+  console.log("__dirname:"+__dirname);
+
+  // TODO ignore common files for NOW (in templates/common/root)
   this.sourceRoot(path.join(__dirname, '../templates/common'));
-  this.directory('root', '.', true);
+  // this.directory('root', '.', true);
+  // this.directory('root', this.appPath, true);
   this.copy('gitignore', '.gitignore');
 };

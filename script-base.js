@@ -91,11 +91,11 @@ var Generator = module.exports = function Generator() {
 util.inherits(Generator, yeoman.generators.NamedBase);
 
 Generator.prototype.generatedSourceFilePath = function(dest) {
-    return this.generatedFilePath(this.env.options.appPath, dest);
+    return this.generatedFilePath(this.appPath, dest);
 }
 
 Generator.prototype.generatedTestFilePath = function(dest) {
-    return this.generatedFilePath(this.env.options.testPath, dest);
+    return this.generatedFilePath(this.appPath, dest);
 }
 
 Generator.prototype.generatedFilePath = function(appPath, dest) {
