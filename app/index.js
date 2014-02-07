@@ -116,10 +116,6 @@ var Generator = module.exports = function Generator(args, options) {
 
 util.inherits(Generator, yeoman.generators.Base);
 
-Generator.prototype.gago = function gago() {
-  console.log("GAGO");
-}
-
 Generator.prototype.welcome = function welcome() {
   // welcome message
   if (!this.options['skip-welcome-message']) {
