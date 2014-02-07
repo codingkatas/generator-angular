@@ -7,7 +7,10 @@ module.exports = {
   rewrite: rewrite,
   rewriteFile: rewriteFile,
   replaceSlashesWithDots: replaceSlashesWithDots,
-  replaceDotsWithSlashes: replaceDotsWithSlashes
+  replaceDotsWithSlashes: replaceDotsWithSlashes,
+  scriptsPath: '/scripts',
+  viewsPath: '/views',
+  fileNameSuffix: ''
 };
 
 function rewriteFile (args) {

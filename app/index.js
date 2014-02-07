@@ -56,18 +56,14 @@ var Generator = module.exports = function Generator(args, options) {
     this.modules = this.modules || {};
     var modulePath = this.modules[this.appName];
     if (modulePath && fs.existsSync(modulePath)) {
+      this.appPath = modulePath;
       // TODO prompt here
     } else {
-      this.modules[this.appname] = "/" + this.appname;
+      this.appPath = "modules/" + this.appname;
+      this.modules[this.appname] = this.appPath;
     }
-    console.log(this.modules);
     this.modulesAsJSON = JSON.stringify(this.modules);
   }
-
-
-  this.hookFor('angular:common', {
-    args: args
-  });
 
   this.hookFor('angular:main', {
     args: args
@@ -119,6 +115,10 @@ var Generator = module.exports = function Generator(args, options) {
 };
 
 util.inherits(Generator, yeoman.generators.Base);
+
+Generator.prototype.gago = function gago() {
+  console.log("GAGO");
+}
 
 Generator.prototype.welcome = function welcome() {
   // welcome message
@@ -270,13 +270,13 @@ Generator.prototype.bootstrapFiles = function bootstrapFiles() {
   var mainFile = 'main.' + (sass ? 's' : '') + 'css';
 
   if (this.bootstrap && !sass) {
-    this.copy('fonts/glyphicons-halflings-regular.eot', path.join(this.appname, 'fonts/glyphicons-halflings-regular.eot'));
-    this.copy('fonts/glyphicons-halflings-regular.ttf', path.join(this.appname, 'fonts/glyphicons-halflings-regular.ttf'));
-    this.copy('fonts/glyphicons-halflings-regular.svg', path.join(this.appname, 'fonts/glyphicons-halflings-regular.svg'));
-    this.copy('fonts/glyphicons-halflings-regular.woff', path.join(this.appname, 'fonts/glyphicons-halflings-regular.woff'));
+    this.copy('fonts/glyphicons-halflings-regular.eot', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.eot'));
+    this.copy('fonts/glyphicons-halflings-regular.ttf', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.ttf'));
+    this.copy('fonts/glyphicons-halflings-regular.svg', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.svg'));
+    this.copy('fonts/glyphicons-halflings-regular.woff', path.join(this.appPath, 'fonts/glyphicons-halflings-regular.woff'));
   }
 
-  this.copy('styles/' + mainFile, this.appname + '/styles/' + mainFile);
+  this.copy('styles/' + mainFile, this.appPath + '/styles/' + mainFile);
 };
 
 Generator.prototype.appJs = function appJs() {
@@ -291,7 +291,7 @@ Generator.prototype.appJs = function appJs() {
 
 Generator.prototype.createIndexHtml = function createIndexHtml() {
   this.indexFile = this.indexFile.replace(/&apos;/g, "'");
-  this.write(path.join(this.appname, 'index.html'), this.indexFile);
+  this.write(path.join(this.appPath, 'index.html'), this.indexFile);
 };
 
 Generator.prototype.packageFiles = function () {
@@ -300,11 +300,20 @@ Generator.prototype.packageFiles = function () {
   this.template('../../templates/common/_bower.json', 'bower.json');
   this.template('../../templates/common/_package.json', 'package.json');
   this.template('../../templates/common/Gruntfile.js', 'Gruntfile.js');
+
+};
+
+Generator.prototype.commonModuleFiles = function () {
+  this.sourceRoot(path.join(__dirname, '../templates/common'));
+  this.directory('app', path.join(this.appPath), true);
+  this.directory('root', '.', true);
+  this.directory('views', path.join(this.appPath, angularUtils.viewsPath), true);
+  this.copy('gitignore', '.gitignore');
 };
 
 Generator.prototype.imageFiles = function () {
   this.sourceRoot(path.join(__dirname, 'templates'));
-  this.directory('images', path.join(this.appname, 'images'), true);
+  this.directory('images', path.join(this.appPath, 'images'), true);
 };
 
 Generator.prototype._injectDependencies = function _injectDependencies() {
@@ -317,19 +326,11 @@ Generator.prototype._injectDependencies = function _injectDependencies() {
   if (this.options['skip-install']) {
     console.log(howToInstall);
   } else {
-    var x = {
-      directory: 'scripts',
-      bowerJson: JSON.stringify(fs.readFileSync('./bower.json')),
-      ignorePath: this.appname + '/',
-      htmlFile: path.join(this.appname, 'index.html'),
-      cssPattern: '<link rel="stylesheet" href="{{filePath}}">'
-    }
-    console.log(x);
     wiredep({
       directory: 'scripts',
       bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
-      ignorePath: this.appname + '/',
-      htmlFile: this.appname + '/index.html',
+      ignorePath: this.appPath + '/',
+      htmlFile: this.appPath + '/index.html',
       cssPattern: '<link rel="stylesheet" href="{{filePath}}">'
     });
   }

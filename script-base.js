@@ -14,13 +14,18 @@ var Generator = module.exports = function Generator() {
   }
   this.appname = this._.slugify(this._.humanize(this.appname));
 
-    if (typeof this.env.options.appNameSuffix === 'undefined') {
-        try {
-            this.env.options.appNameSuffix = require(path.join(process.cwd(), 'bower.json')).appNameSuffix;
-        } catch (e) {
-            this.env.options.appNameSuffix = "";
-        }
+  try {
+    this.appPath = require(path.join(process.cwd(), 'generatedModules.json')).modules[this.appname];
+  } catch (e) {
+  }
+
+  if (typeof this.env.options.appNameSuffix === 'undefined') {
+    try {
+      this.env.options.appNameSuffix = require(path.join(process.cwd(), 'bower.json')).appNameSuffix;
+    } catch (e) {
+      this.env.options.appNameSuffix = "";
     }
+  }
   this.scriptModuleName = this._.camelize(this.appname) + this.env.options.appNameSuffix;
 
   this.cameledName = this._.camelize(this.name);
@@ -39,7 +44,8 @@ var Generator = module.exports = function Generator() {
   if (typeof this.env.options.testPath === 'undefined') {
     try {
       this.env.options.testPath = require(path.join(process.cwd(), 'bower.json')).testPath;
-    } catch (e) {}
+    } catch (e) {
+    }
     this.env.options.testPath = this.env.options.testPath || 'test/spec';
   }
 
@@ -50,7 +56,7 @@ var Generator = module.exports = function Generator() {
     // attempt to detect if user is using CS or not
     // if cml arg provided, use that; else look for the existence of cs
     if (!this.options.coffee &&
-      this.expandFiles(path.join(this.appname, '/scripts/**/*.coffee'), {}).length > 0) {
+        this.expandFiles(path.join(this.appname, '/scripts/**/*.coffee'), {}).length > 0) {
       this.options.coffee = true;
     }
 
@@ -83,16 +89,16 @@ var Generator = module.exports = function Generator() {
 
 util.inherits(Generator, yeoman.generators.NamedBase);
 
-Generator.prototype.generatedSourceFilePath = function(dest) {
-    return this.generatedFilePath(this.appname, dest);
+Generator.prototype.generatedSourceFilePath = function (dest) {
+  return this.generatedFilePath(this.appPath, dest);
 }
 
-Generator.prototype.generatedTestFilePath = function(dest) {
-    return this.generatedFilePath(this.appname, dest);
+Generator.prototype.generatedTestFilePath = function (dest) {
+  return this.generatedFilePath(path.join(this.appPath, this.scriptsPath, "tests"), dest);
 }
 
-Generator.prototype.generatedFilePath = function(appPath, dest) {
-    return path.join(appPath, dest.toLowerCase()) + this.fileNameSuffix + this.scriptSuffix;
+Generator.prototype.generatedFilePath = function (appPath, dest) {
+  return path.join(appPath, dest.toLowerCase()) + this.fileNameSuffix + this.scriptSuffix;
 }
 
 Generator.prototype.appTemplate = function (src, dest) {
@@ -125,7 +131,7 @@ Generator.prototype.addScriptToIndex = function (script) {
       file: fullPath,
       needle: '<!-- endbuild, this is where yeoman generated components are automatically placed. DO NOT EDIT. -->',
       splicable: [
-          //replace backslash with slash...
+        //replace backslash with slash...
         '<script src="scripts/' + script.replace(/\\/g, '/') + '.js"></script>'
       ]
     });
@@ -135,7 +141,7 @@ Generator.prototype.addScriptToIndex = function (script) {
 };
 
 Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate, targetDirectory, skipAdd) {
-  var dir = path.join(this._.camelize(this.appname), this.scriptsPath, targetDirectory, this.name);
+  var dir = path.join(this.scriptsPath, targetDirectory, this.name);
   this.appTemplate(appTemplate, dir);
   this.testTemplate(testTemplate, dir);
   if (!skipAdd) {
