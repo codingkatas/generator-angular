@@ -90,7 +90,7 @@ var Generator = module.exports = function Generator() {
 util.inherits(Generator, yeoman.generators.NamedBase);
 
 Generator.prototype.generatedSourceFilePath = function (dest) {
-  return this.generatedFilePath(this.appPath, dest);
+  return this.generatedFilePath(path.join(this.appPath, this.scriptsPath), dest);
 }
 
 Generator.prototype.generatedTestFilePath = function (dest) {
@@ -129,7 +129,7 @@ Generator.prototype.addScriptToIndex = function (script) {
     var fullPath = path.join(appName, viewsPath, 'index.html');
     angularUtils.rewriteFile({
       file: fullPath,
-      needle: '<!-- endbuild, this is where yeoman generated components are automatically placed. DO NOT EDIT. -->',
+      needle: '<!-- endbuild -->',
       splicable: [
         //replace backslash with slash...
         '<script src="scripts/' + script.replace(/\\/g, '/') + '.js"></script>'
@@ -141,7 +141,7 @@ Generator.prototype.addScriptToIndex = function (script) {
 };
 
 Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate, targetDirectory, skipAdd) {
-  var dir = path.join(this.scriptsPath, targetDirectory, this.name);
+  var dir = path.join(targetDirectory, this.name);
   this.appTemplate(appTemplate, dir);
   this.testTemplate(testTemplate, dir);
   if (!skipAdd) {
