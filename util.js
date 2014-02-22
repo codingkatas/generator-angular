@@ -9,7 +9,6 @@ module.exports = {
   replaceSlashesWithDots: replaceSlashesWithDots,
   replaceDotsWithSlashes: replaceDotsWithSlashes,
   scriptsPath: '/scripts',
-  viewsPath: '/views',
   fileNameSuffix: ''
 };
 

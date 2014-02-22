@@ -1,8 +1,6 @@
 {
-  "name": "<%= _.slugify(_.humanize(appname)) %>",
+  "name": "angular-app",
   "version": "0.0.0",
-  "testPath": "src/test/webapp/modules",
-  "appNameSuffix": "Module",
   "dependencies": {
     "angular": "1.2.6",
     "json3": "~3.2.6",

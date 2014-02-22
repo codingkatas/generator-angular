@@ -1,0 +1,5 @@
+{
+  "modules": <%= modulesAsJSON %>,
+  "srcPath": "<%= srcPath %>",
+  "testPath" : "<%= testPath %>"
+}

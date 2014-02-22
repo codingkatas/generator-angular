@@ -14,5 +14,5 @@ util.inherits(Generator, ScriptBase);
 Generator.prototype.createAppFile = function createAppFile() {
   this.angularModules = this.env.options.angularDeps;
   this.ngRoute = this.env.options.ngRoute;
-  this.appTemplate('app', 'app');
+  this.appTemplate('app', path.join(this.appPath, this.scriptsPath, 'app'));
 };
