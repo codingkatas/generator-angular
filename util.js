@@ -8,8 +8,7 @@ module.exports = {
   rewriteFile: rewriteFile,
   replaceSlashesWithDots: replaceSlashesWithDots,
   replaceDotsWithSlashes: replaceDotsWithSlashes,
-  scriptsPath: '/scripts',
-  fileNameSuffix: ''
+  replaceBackSlashesWithSlashes: replaceBackSlashesWithSlashes
 };
 
 function rewriteFile (args) {
@@ -70,5 +69,10 @@ function replaceSlashesWithDots(name) {
 //Replace all dots '/' with slashes
 function replaceDotsWithSlashes(name) {
   return name.replace(/\./g, '/');
+}
+
+//Replace all dots '/' with slashes
+function replaceBackSlashesWithSlashes(name) {
+  return name.replace(/\\/g, '/');
 }
 

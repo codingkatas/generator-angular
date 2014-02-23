@@ -108,12 +108,12 @@ Generator.prototype.requireAppName = function askForAppName() {
         this.requireAppName();
       } else {
         this.appName = props.appName;
+        this.resolveModule(this.appName);
+        this.env.options.appName = this.appName;
         cb();
       }
     }.bind(this));
   }
-  this.resolveModule(this.appName);
-  this.env.options.appName = this.appName;
 };
 
 Generator.prototype.ensureNewModule = function ensureNewModule() {
@@ -344,7 +344,7 @@ Generator.prototype._injectDependencies = function _injectDependencies() {
     console.log(howToInstall);
   } else {
     wiredep({
-      directory: 'scripts',
+      directory: this.bowerDependenciesLocation,
       bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
       ignorePath: this.appPath + '/',
       htmlFile: this.appPath + '/index.html',

@@ -1,6 +1,7 @@
 var util = require('util');
 var yeoman = require('yeoman-generator');
 var path = require('path');
+var angularUtils = require('./util.js');
 
 /**
  * Common properties we need for our generator.
@@ -14,6 +15,7 @@ var Generator = module.exports = function AngularAppBase(args, options) {
   this.scriptsPath = "scripts";
   this.scriptsTestPath = "scripts/test";
   this.viewsPath = "views";
+  this.modulesPath = "modules";
 
   try {
     this.modulesConfig = require(path.join(process.cwd(), 'modulesConfig.json'));
@@ -21,33 +23,25 @@ var Generator = module.exports = function AngularAppBase(args, options) {
     this.modulesConfig = {};
   }
 
-  var defaultSrcPath = "/modules/\<moduleName\>";
-  var defaultTestPath = "/modules/\<moduleName\>/scripts/test";
+  var defaultSrcPath = ".";
+  var defaultTestPath = ".";
 
   if (!this.modulesConfig.srcPath) {
     this.option('srcPath', {
-      desc: 'Subdirectory to place generated source module into.',
+      desc: 'Prefix before the "/modules" folder. Files will be placed in "srcPath/modules folder."',
       defaults: defaultSrcPath
     });
-    if (!this.options.srcPath || (this.options.srcPath === defaultSrcPath)) {
-      this.srcPath = "modules";
-    } else {
-      this.srcPath = this.options.srcPath;
-    }
+    this.srcPath = this.options.srcPath;
   } else {
     this.srcPath = this.modulesConfig.srcPath;
   }
 
   if (!this.modulesConfig.testPath) {
     this.option('testPath', {
-      desc: 'Subdirectory to place generated test scripts into.',
+      desc: 'Prefix before the "/modules" folder. Files will be placed in "testPath/modules folder."',
       defaults: defaultTestPath
     });
-    if (!this.options.testPath || (this.options.testPath === defaultTestPath)) {
-      this.testPath = "modules";
-    } else {
-      this.testPath = this.options.testPath;
-    }
+    this.testPath = this.options.testPath;
   } else {
     this.testPath = this.modulesConfig.testPath;
   }
@@ -59,7 +53,8 @@ var Generator = module.exports = function AngularAppBase(args, options) {
 
     this.appName = this._.camelize(this._.slugify(this._.humanize(appName)));
     this.scriptModuleName = this.appName + "Module";
-    this.appPath = path.join(this.srcPath, this.appName);
+    this.appPath = angularUtils.replaceBackSlashesWithSlashes(path.join(this.srcPath, this.modulesPath, this.appName));
+    this.bowerDependenciesLocation = angularUtils.replaceBackSlashesWithSlashes(path.join(this.srcPath, this.scriptsPath));
     this.appTestPath = path.join(this.testPath, this.appName, this.scriptsTestPath)
   }
 
