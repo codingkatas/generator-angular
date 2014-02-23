@@ -59,8 +59,6 @@ var Generator = module.exports = function AngularAppBase(args, options) {
 
     this.appName = this._.camelize(this._.slugify(this._.humanize(appName)));
     this.scriptModuleName = this.appName + "Module";
-    console.log('this.srcPath:' + this.srcPath);
-    console.log('this.appName:' + this.appName);
     this.appPath = path.join(this.srcPath, this.appName);
     this.appTestPath = path.join(this.testPath, this.appName, this.scriptsTestPath)
   }

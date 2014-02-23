@@ -17,7 +17,14 @@ var Generator = module.exports = function Generator() {
 
 util.inherits(Generator, ScriptBase);
 
+Generator.prototype.askModule = function askModule() {
+  if (!this.appPath) {
+    this.askWhichModule();
+  }
+}
+
 Generator.prototype.createControllerFiles = function createControllerFiles() {
+
   this.generateSourceAndTest(
     'controller',
     'spec/controller',

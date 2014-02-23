@@ -61,7 +61,6 @@ Generator.prototype.testTemplate = function (src, dest) {
 };
 
 Generator.prototype.htmlTemplate = function (src, dest) {
-
   yeoman.generators.Base.prototype.template.apply(this, [
     src,
     path.join(this.appName, dest.toLowerCase())

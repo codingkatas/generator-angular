@@ -12,11 +12,6 @@ var AngularAppBase = require('./angular-app-base.js');
 var Generator = module.exports = function AngularAppNamedBase(args, options) {
   AngularAppBase.apply(this, arguments);
   this.argument('name', { type: String, required: true });
-  var who = this;
-  this.on('start', function () {
-
-    this.askWhichModule();
-  });
 };
 
 util.inherits(Generator, AngularAppBase);
@@ -46,10 +41,11 @@ Generator.prototype.askWhichModule = function askWhichModule() {
         default: ''
       }
     ], function (props) {
-      if (props.moduleName) {
+      if (props.moduleName && modules[props.moduleName]) {
         this.resolveModule(props.moduleName);
         cb();
       } else {
+        console.log("Invalid Module Name.");
         this.askWhichModule();
       }
     }.bind(this));

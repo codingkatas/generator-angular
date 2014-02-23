@@ -12,8 +12,7 @@ var Generator = module.exports = function Generator() {
 
 util.inherits(Generator, yeoman.generators.NamedBase);
 
-Generator.prototype.whichModuleToPutInto = function askWhichModuleToPutInto() {
-  console.log('MainIndexWhichModule');
+Generator.prototype.askModule = function askModule() {
   if (!this.appPath) {
     this.askWhichModule();
   }
