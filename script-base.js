@@ -49,21 +49,21 @@ util.inherits(Generator, AngularAppNamedBase);
 Generator.prototype.appTemplate = function (src, dest) {
   yeoman.generators.Base.prototype.template.apply(this, [
     src + this.scriptSuffix,
-    dest + this.scriptSuffix
+    path.join(this.appPath, this.scriptsPath, dest + this.fileNameSuffix) + this.scriptSuffix
   ]);
 };
 
 Generator.prototype.testTemplate = function (src, dest) {
   yeoman.generators.Base.prototype.template.apply(this, [
     src + this.scriptSuffix,
-    dest + this.scriptSuffix
+    path.join(this.appScriptsTestPath, dest) + this.scriptSuffix
   ]);
 };
 
 Generator.prototype.htmlTemplate = function (src, dest) {
   yeoman.generators.Base.prototype.template.apply(this, [
     src,
-    path.join(this.appName, dest.toLowerCase())
+    path.join(this.appPath, this.viewsPath, dest)
   ]);
 };
 
@@ -82,13 +82,13 @@ Generator.prototype.addScriptToIndex = function (script) {
   }
 
   try {
-    var fullPath = path.join(this.appPath, this.viewsPath, 'index.html');
+    var fullPath = path.join(this.appPath, 'index.html');
     angularUtils.rewriteFile({
       file: fullPath,
       needle: '<!-- endbuild -->',
       splicable: [
         //replace backslash with slash...
-        '<script src="scripts/' + script.replace(/\\/g, '/') + '.js"></script>'
+        '<script src="' + this.scriptsPath + '/' + script.replace(/\\/g, '/') + this.scriptSuffix + '"></script>'
       ]
     });
   } catch (e) {
@@ -97,9 +97,10 @@ Generator.prototype.addScriptToIndex = function (script) {
 };
 
 Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate, targetDirectory, skipAdd) {
-  this.appTemplate(appTemplate, path.join(this.appPath, this.scriptsPath, targetDirectory, this.name));
-  this.testTemplate(testTemplate, path.join(this.appTestPath, targetDirectory, this.name));
+  var dir = path.join(targetDirectory, this.name);
+  this.appTemplate(appTemplate, dir);
+  this.testTemplate(testTemplate, dir);
   if (!skipAdd) {
-    this.addScriptToIndex(path.join(this.appPath, targetDirectory, this.name));
+    this.addScriptToIndex(dir);
   }
 };

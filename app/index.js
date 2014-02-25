@@ -110,6 +110,9 @@ Generator.prototype.requireAppName = function askForAppName() {
         this.appName = props.appName;
         this.resolveModule(this.appName);
         this.env.options.appName = this.appName;
+        this.modules = this.modulesConfig.modules || {};
+        this.modules[this.appName] = this.appPath;
+        this.modulesAsJSON = JSON.stringify(this.modules);
         cb();
       }
     }.bind(this));
@@ -117,7 +120,6 @@ Generator.prototype.requireAppName = function askForAppName() {
 };
 
 Generator.prototype.ensureNewModule = function ensureNewModule() {
-  this.modules = this.modulesConfig.modules || {};
   var modulePath = this.modules[this.appName];
   if (modulePath && fs.existsSync(modulePath)) {
     var cb = this.async();
@@ -125,7 +127,7 @@ Generator.prototype.ensureNewModule = function ensureNewModule() {
       {
         type: 'confirm',
         name: 'reEnterModuleName',
-        message: 'You have generated a module with the name [' + chalk.bold(chalk.red(this.appName)) + '] in the past.\n' +
+        message: 'You have already generated a module with the name [' + chalk.bold(chalk.red(this.appName)) + '] in the past.\n' +
             'Would you like to enter a new module name \n' +
             chalk.bold(chalk.red('(instead of overwriting the files in the existing module)?')),
         default: true
@@ -138,14 +140,10 @@ Generator.prototype.ensureNewModule = function ensureNewModule() {
 }
 
 Generator.prototype.moduleOverwriteChoice = function moduleOverwriteChoice() {
-  var cb = this.async();
   if (this.reEnterModuleName) {
     this.appName = '';
     this.requireAppName();
   }
-  cb();
-  this.modules[this.appName] = this.appPath;
-  this.modulesAsJSON = JSON.stringify(this.modules);
 }
 
 Generator.prototype.resolveCoffee = function resolveCoffee() {
@@ -301,7 +299,8 @@ Generator.prototype.appJs = function appJs() {
     html: this.indexFile,
     fileType: 'js',
     optimizedPath: 'scripts/scripts.js',
-    sourceFileList: [path.join(this.scriptsPath, 'app.js'), path.join(this.scriptsPath, 'controllers/main.js')],
+    sourceFileList: [angularUtils.replaceBackSlashesWithSlashes(path.join(this.scriptsPath, 'app.js')),
+      angularUtils.replaceBackSlashesWithSlashes(path.join(this.scriptsPath, 'controllers/main.js'))],
     searchPath: ['.tmp', this.appPath]
   });
 };
@@ -316,6 +315,8 @@ Generator.prototype.packageFiles = function () {
   this.template('../../templates/common/modulesConfig.json', 'modulesConfig.json');
   this.template('../../templates/common/_bower.json', 'bower.json');
   this.template('../../templates/common/_package.json', 'package.json');
+
+  this.template('../../templates/common/_bower.json', path.join(this.appPath, 'bower.json'));
   this.template('../../templates/common/Gruntfile.js', 'Gruntfile.js');
 
 };
@@ -343,11 +344,11 @@ Generator.prototype._injectDependencies = function _injectDependencies() {
   if (this.options['skip-install']) {
     console.log(howToInstall);
   } else {
+    process.chdir(this.appPath);
     wiredep({
-      directory: this.bowerDependenciesLocation,
+      directory: '../../' + this.scriptsPath, // the bower scripts are always installed two directories up from the appPath
       bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
-      ignorePath: this.appPath + '/',
-      htmlFile: this.appPath + '/index.html',
+      htmlFile: 'index.html',
       cssPattern: '<link rel="stylesheet" href="{{filePath}}">'
     });
   }

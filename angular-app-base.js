@@ -55,7 +55,7 @@ var Generator = module.exports = function AngularAppBase(args, options) {
     this.scriptModuleName = this.appName + "Module";
     this.appPath = angularUtils.replaceBackSlashesWithSlashes(path.join(this.srcPath, this.modulesPath, this.appName));
     this.bowerDependenciesLocation = angularUtils.replaceBackSlashesWithSlashes(path.join(this.srcPath, this.scriptsPath));
-    this.appTestPath = path.join(this.testPath, this.appName, this.scriptsTestPath)
+    this.appScriptsTestPath = angularUtils.replaceBackSlashesWithSlashes(path.join(this.testPath, this.modulesPath, this.appName, this.scriptsTestPath));
   }
 
   if (this.env.options.appName) {

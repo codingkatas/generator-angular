@@ -2,6 +2,7 @@
 var util = require('util');
 var ScriptBase = require('../script-base.js');
 var fs = require('fs');
+var path = require('path');
 
 var Generator = module.exports = function Generator(args, options) {
   ScriptBase.apply(this, arguments);
@@ -21,7 +22,7 @@ Generator.prototype.askForOverwrite = function askForOverwrite() {
   var cb = this.async();
 
   // TODO: Any yeoman.util function to handle this?
-  var fileExists = fs.existsSync(this.generatedSourceFilePath('/' + buildRelativePath(this.fileName)));
+  var fileExists = fs.existsSync( path.join(this.appPath, this.scriptsPath, buildRelativePath(this.fileName), '.js' ));
   if (fileExists) {
     var prompts = [{
       type: 'confirm',
@@ -70,5 +71,5 @@ Generator.prototype.createDecoratorFiles = function createDecoratorFiles() {
 };
 
 function buildRelativePath(fileName){
-  return 'decorators/' + fileName + "Decorator";
+  return 'decorators/' + fileName;
 }

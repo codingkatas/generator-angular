@@ -20,5 +20,5 @@ Generator.prototype.askModule = function askModule() {
 Generator.prototype.createAppFile = function createAppFile() {
   this.angularModules = this.env.options.angularDeps;
   this.ngRoute = this.env.options.ngRoute;
-  this.appTemplate('app', path.join(this.appPath, this.scriptsPath, 'app'));
+  this.appTemplate('app', 'app');
 };

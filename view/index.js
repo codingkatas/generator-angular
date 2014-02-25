@@ -2,15 +2,16 @@
 var path = require('path');
 var util = require('util');
 var yeoman = require('yeoman-generator');
+var AngularAppNamedBase = require('../angular-app-named-base');
 
 
 var Generator = module.exports = function Generator() {
-  yeoman.generators.NamedBase.apply(this, arguments);
+  AngularAppNamedBase.apply(this, arguments);
   this.sourceRoot(path.join(__dirname, '../templates'));
 
 };
 
-util.inherits(Generator, yeoman.generators.NamedBase);
+util.inherits(Generator, AngularAppNamedBase);
 
 Generator.prototype.askModule = function askModule() {
   if (!this.appPath) {
@@ -24,7 +25,7 @@ Generator.prototype.createViewFiles = function createViewFiles() {
     path.join(
       this.appPath,
       'views',
-      this.name.toLowerCase() + '.html'
+      this.name + '.html'
     )
   );
 };
