@@ -1,6 +1,7 @@
 # AngularJS generator [![Build Status](https://secure.travis-ci.org/yeoman/generator-angular.png?branch=master)](http://travis-ci.org/yeoman/generator-angular) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
 > Yeoman generator for AngularJS - lets you quickly set up a project with sensible defaults and best practises.
+> Forked generator that allows creation of modules. The module name is a required prompt.
 
 
 ## Usage
@@ -41,6 +42,26 @@ Available generators:
 * [angular:view](#view)
 
 **Note: Generators are to be run from the root directory of your app.**
+
+### Module Name
+The module name is a required parameter for the generator. It allows structuring of different modules under one parent directory. Each generator will ask for a module name, which translates to a sub-directory to put those files under.
+
+For example, if module name given was "module1", then app-specific files will be generated as
+
+```
+modules
+ |_  module1
+       |_ scripts
+       |   |_ controllers/mainCtrl.js
+       |_ views/main.html
+       |_ index.html
+       |_ etc
+ _    scripts
+       |_ angular/angular.js
+       |_ etc
+```
+
+Each sub-generator will also be prompted for the name of an existing module to generate those files into.
 
 ### App
 Sets up a new AngularJS app, generating all the boilerplate you need to get started. The app generator also optionally installs Twitter Bootstrap and additional AngularJS modules, such as angular-resource (installed by default).
