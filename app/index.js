@@ -109,13 +109,11 @@ Generator.prototype.requireAppName = function askForAppName() {
       } else {
         this.appName = props.appName;
         this.resolveModule(this.appName);
-        this.env.options.appName = this.appName;
-        this.modules = this.modulesConfig.modules || {};
-        this.modules[this.appName] = this.appPath;
-        this.modulesAsJSON = JSON.stringify(this.modules);
         cb();
       }
     }.bind(this));
+  } else {
+    this.resolveModule(this.appName);
   }
 };
 
