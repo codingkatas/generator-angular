@@ -13,17 +13,11 @@ var Generator = module.exports = function Generator() {
 
 util.inherits(Generator, ScriptBase);
 
-Generator.prototype.askModule = function askModule() {
-  if (!this.appPath) {
-    this.askWhichModule();
-  }
-}
-
 Generator.prototype.rewriteAppJs = function () {
   var coffee = this.env.options.coffee;
   var config = {
     file: path.join(
-      this.appName,
+      this.appPath,
       this.scriptsPath,
       'app.' + (coffee ? 'coffee' : 'js')
     ),
