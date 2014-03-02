@@ -51,13 +51,15 @@ Once one module is generated, the srcPath and testPath cannot be changed anymore
 ### <Changed> TO-DO list
 This is only a side-project that I can only work on when I have some free time, and so there are still a lot of stuff I need to do to make this project "Production-quality".
 
-Update the unit tests
-Module overwrite prompt ONLY WORKS ONCE
-Support generation of npmrc and bowerrc with proxies entered from the prompt
-Update Gruntfile.js to have all modules' files included
-Support Angular UI-router
-Update CoffeeScript templates (not using coffee right now so this is low priority)
-Remove prompts for overwrite of bower.json, package.json and modulesConfig.json
+
+* Update the unit tests
+* Module overwrite prompt ONLY WORKS ONCE
+* Support generation of npmrc and bowerrc with proxies entered from the prompt
+* Update Gruntfile.js to have all modules' files included
+* Support Angular UI-router
+* Update CoffeeScript templates (not using coffee right now so this is low priority)
+* Remove prompts for overwrite of bower.json, package.json and modulesConfig.json
+
 
 
 ## Original documentation from yeoman follows...
