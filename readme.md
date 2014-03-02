@@ -21,6 +21,7 @@ yo angular:app module1
 
 ...then app-specific files will be generated as
 
+```
 modules
  |_  module1
        |_ scripts
