@@ -1,8 +1,69 @@
+### <Changed> Yeoman Angular app with support for multiple modules
+In my actual work, we found the need for angular scaffolding to have different modules under one parent directory. This will enable better code re-use and code organization.
+
+Also, a lot of people have this on their wishlist. See https://github.com/yeoman/generator-angular/issues/109
+
+Feedback is definitely appreciated, which will help me gather energy to improve this project.
+
+With this project, I tried to work as closely as possible to the original yeoman code, instead of creating a new generator. I also tried to minimize the additional prompts so as
+not to defeat the purpose of scaffolding.
+
+(Also, I'm a noob to NodeJS, so suggestions to improve the code are also welcome).
+
+### <Changed> Module Name
+The module name is a required parameter for the generator. It allows structuring of different modules under one parent directory. Each generator will ask for a module name, which translates to a sub-directory to put those files under.
+
+For example, if module name given was "module1"...
+
+```
+yo angular:app module1
+```
+
+...then app-specific files will be generated as
+
+modules
+ |_  module1
+       |_ scripts
+       |   |_ controllers/mainCtrl.js
+       |_ views/main.html
+       |_ index.html
+       |_ etc
+ _    scripts (bower components)
+       |_ angular/angular.js
+       |_ etc
+```
+
+The information about the name of the module and the path to the actual directory is stored in a generated "modulesConfig.json"
+
+Each sub-generator will also be prompted for the name of an existing module to generate those files into.
+
+### <Changed> srcPath and testPath
+There is an option to pass a srcPath and testPath, which will be another directory structure before the "modules" directory. I come from a Java background, and I created this
+feature to help Maven users to have a "src/main/webapp/" for source and "src/test/webapp" for test structure before the modules directory.
+"bower_components" directory name where angular components are generated were changed to "scripts"
+
+### <Changed> Unchangeable file conventions (for now)
+Each javacript filename will be generated with a suffix (i.e. Ctrl.js for controllers, Service.js for services, etc)
+The name of the "modules" directory cannot be changed for now...
+Once one module is generated, the srcPath and testPath cannot be changed anymore...(which makes sense for my needs but maybe not for others)
+
+### <Changed> TO-DO list
+This is only a side-project that I can only work on when I have some free time, and so there are still a lot of stuff I need to do to make this project "Production-quality".
+
+Update the unit tests
+Module overwrite prompt ONLY WORKS ONCE
+Support generation of npmrc and bowerrc with proxies entered from the prompt
+Update Gruntfile.js to have all modules' files included
+Support Angular UI-router
+Update CoffeeScript templates (not using coffee right now so this is low priority)
+Remove prompts for overwrite of bower.json, package.json and modulesConfig.json
+
+
+## Original documentation from yeoman follows...
 # AngularJS generator [![Build Status](https://secure.travis-ci.org/yeoman/generator-angular.png?branch=master)](http://travis-ci.org/yeoman/generator-angular) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
 > Yeoman generator for AngularJS - lets you quickly set up a project with sensible defaults and best practises.
 > Forked generator that allows creation of modules. The module name is a required prompt.
-
 
 ## Usage
 
@@ -42,26 +103,6 @@ Available generators:
 * [angular:view](#view)
 
 **Note: Generators are to be run from the root directory of your app.**
-
-### Module Name
-The module name is a required parameter for the generator. It allows structuring of different modules under one parent directory. Each generator will ask for a module name, which translates to a sub-directory to put those files under.
-
-For example, if module name given was "module1", then app-specific files will be generated as
-
-```
-modules
- |_  module1
-       |_ scripts
-       |   |_ controllers/mainCtrl.js
-       |_ views/main.html
-       |_ index.html
-       |_ etc
- _    scripts
-       |_ angular/angular.js
-       |_ etc
-```
-
-Each sub-generator will also be prompted for the name of an existing module to generate those files into.
 
 ### App
 Sets up a new AngularJS app, generating all the boilerplate you need to get started. The app generator also optionally installs Twitter Bootstrap and additional AngularJS modules, such as angular-resource (installed by default).
