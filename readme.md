@@ -44,9 +44,9 @@ feature to help Maven users to have a "src/main/webapp/" for source and "src/tes
 "bower_components" directory name where angular components are generated were changed to "scripts"
 
 ### <Changed> Unchangeable file conventions (for now)
-Each javacript filename will be generated with a suffix (i.e. Ctrl.js for controllers, Service.js for services, etc)
-The name of the "modules" directory cannot be changed for now...
-Once one module is generated, the srcPath and testPath cannot be changed anymore...(which makes sense for my needs but maybe not for others)
+* Each javacript filename will be generated with a suffix (i.e. Ctrl.js for controllers, Service.js for services, etc)
+* The name of the "modules" directory cannot be changed for now...
+* Once one module is generated, the srcPath and testPath cannot be changed anymore...(which makes sense for my needs but maybe not for others)
 
 ### <Changed> TO-DO list
 This is only a side-project that I can only work on when I have some free time, and so there are still a lot of stuff I need to do to make this project "Production-quality".
