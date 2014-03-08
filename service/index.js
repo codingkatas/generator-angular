@@ -7,6 +7,8 @@ var Generator = module.exports = function Generator() {
   ScriptBase.apply(this, arguments);
 
   this.fileNameSuffix = 'Service';
+
+  this.name = this._.classify(this.name);
 };
 
 util.inherits(Generator, ScriptBase);

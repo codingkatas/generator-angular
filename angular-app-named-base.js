@@ -72,8 +72,6 @@ Generator.prototype.askWhichModule = function askWhichModule() {
   }
 }
 
-// run this property at the start always...
-// Object.defineProperty(Generator.prototype, 'askWhichModule', {value: function() {Generator.prototype.askWhichModule();}, enumerable: true});
 
 
 

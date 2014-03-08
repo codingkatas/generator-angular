@@ -12,6 +12,8 @@ var Generator = module.exports = function Generator() {
     this.name = this.name.slice(0, -4);
   }
 
+  this.name = this._.classify(this.name);
+
   this.fileNameSuffix = 'Ctrl';
 };
 
