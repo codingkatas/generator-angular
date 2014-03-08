@@ -12,12 +12,6 @@ var Generator = module.exports = function Generator(args, options) {
 
 util.inherits(Generator, ScriptBase);
 
-Generator.prototype.askModule = function askModule() {
-  if (!this.appPath) {
-    this.askWhichModule();
-  }
-}
-
 Generator.prototype.askForOverwrite = function askForOverwrite() {
   var cb = this.async();
 

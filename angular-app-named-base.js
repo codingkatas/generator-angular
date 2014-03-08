@@ -12,6 +12,24 @@ var AngularAppBase = require('./angular-app-base.js');
 var Generator = module.exports = function AngularAppNamedBase(args, options) {
   AngularAppBase.apply(this, arguments);
   this.argument('name', { type: String, required: true });
+
+  var prototype = Object.getPrototypeOf(this);
+
+  // re-order such that our 'askWhichModule' is called first
+  var methodKeys = Object.keys(prototype);
+  var methodMapping = {};
+
+  methodKeys.map(function (methodKey) {
+    methodMapping[methodKey]= prototype[methodKey];
+    delete prototype[methodKey];
+  });
+
+  prototype.askWhichModule = Generator.prototype.askWhichModule;
+
+  //re-add the methods
+  for (var method in methodMapping) {
+    prototype[method] = methodMapping[method];
+  }
 };
 
 util.inherits(Generator, AngularAppBase);
@@ -53,5 +71,11 @@ Generator.prototype.askWhichModule = function askWhichModule() {
     throw new Error('Generate an app scaffolding first using yo angular or yo:angular app');
   }
 }
+
+// run this property at the start always...
+// Object.defineProperty(Generator.prototype, 'askWhichModule', {value: function() {Generator.prototype.askWhichModule();}, enumerable: true});
+
+
+
 
 

@@ -11,12 +11,6 @@ var Generator = module.exports = function Generator() {
 
 util.inherits(Generator, ScriptBase);
 
-Generator.prototype.askModule = function askModule() {
-  if (!this.appPath) {
-    this.askWhichModule();
-  }
-}
-
 Generator.prototype.createAppFile = function createAppFile() {
   this.angularModules = this.env.options.angularDeps;
   this.ngRoute = this.env.options.ngRoute;
