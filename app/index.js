@@ -107,9 +107,13 @@ Generator.prototype.requireAppName = function askForAppName() {
       if (!props.appName) {
         this.requireAppName();
       } else {
-        this.appName = props.appName;
-        this.resolveModule(this.appName);
-        cb();
+        this.resolveModule(props.appName);
+        var modulePath = this.modules[props.appName];
+        if (modulePath && fs.existsSync(modulePath)) {
+          this._ensureNewModule(cb);
+        } else {
+          cb();
+        }
       }
     }.bind(this));
   } else {
@@ -117,31 +121,24 @@ Generator.prototype.requireAppName = function askForAppName() {
   }
 };
 
-Generator.prototype.ensureNewModule = function ensureNewModule() {
-  var modulePath = this.modules[this.appName];
-  if (modulePath && fs.existsSync(modulePath)) {
-    var cb = this.async();
-    this.prompt([
-      {
-        type: 'confirm',
-        name: 'reEnterModuleName',
-        message: 'You have already generated a module with the name [' + chalk.bold(chalk.red(this.appName)) + '] in the past.\n' +
-            'Would you like to enter a new module name \n' +
-            chalk.bold(chalk.red('(instead of overwriting the files in the existing module)?')),
-        default: true
-      }
-    ], function (props) {
-      this.reEnterModuleName = props.reEnterModuleName;
+Generator.prototype._ensureNewModule = function _ensureNewModule(cb) {
+  this.prompt([
+    {
+      type: 'confirm',
+      name: 'reEnterModuleName',
+      message: 'You have already generated a module with the name [' + chalk.bold(chalk.red(this.appName)) + '] in the past.\n' +
+          'Would you like to enter a new module name \n' +
+          chalk.bold(chalk.red('(instead of overwriting the files in the existing module)?')),
+      default: true
+    }
+  ], function (props) {
+    if (props.reEnterModuleName) {
+      this.appName = '';
+      this.requireAppName();
+    } else {
       cb();
-    }.bind(this));
-  }
-}
-
-Generator.prototype.moduleOverwriteChoice = function moduleOverwriteChoice() {
-  if (this.reEnterModuleName) {
-    this.appName = '';
-    this.requireAppName();
-  }
+    }
+  }.bind(this));
 }
 
 Generator.prototype.resolveCoffee = function resolveCoffee() {
