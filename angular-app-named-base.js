@@ -35,6 +35,9 @@ var Generator = module.exports = function AngularAppNamedBase(args, options) {
 util.inherits(Generator, AngularAppBase);
 
 Generator.prototype.askWhichModule = function askWhichModule() {
+  if (this.appPath) {
+    return;
+  }
   var messageListOfModules = '';
 
   var modules = this.modulesConfig.modules;
