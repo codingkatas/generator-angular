@@ -3,7 +3,7 @@
 describe('Filter: <%= cameledName %>', function () {
 
   // load the filter's module
-  beforeEach(module('<%= scriptAppName %>'));
+  beforeEach(module('<%= scriptModuleName %>'));
 
   // initialize a new instance of the filter before each test
   var <%= cameledName %>;

@@ -1,6 +1,6 @@
 'use strict';
 
-<%= scriptAppName %>.directive('<%= cameledName %>', function () {
+<%= scriptModuleName %>.directive('<%= cameledName %>', function () {
     return {
       template: '<div></div>',
       restrict: 'E',

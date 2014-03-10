@@ -1,3 +1,3 @@
 'use strict';
 
-<%= scriptAppName %>.constant('<%= cameledName %>', 42);
+<%= scriptModuleName %>.constant('<%= cameledName %>', 42);

@@ -12,13 +12,17 @@ var Generator = module.exports = function Generator() {
     this.name = this.name.slice(0, -4);
   }
 
-  this.fileNameSuffix = 'Ctrl';
+  this.name = this._.classify(this.name);
 
+  this.fileNameSuffix = 'Ctrl';
 };
 
 util.inherits(Generator, ScriptBase);
 
+
+
 Generator.prototype.createControllerFiles = function createControllerFiles() {
+
   this.generateSourceAndTest(
     'controller',
     'spec/controller',

@@ -1,6 +1,6 @@
 'use strict';
 
-<%= scriptAppName %>.factory('<%= cameledName %>', function () {
+<%= scriptModuleName %>.factory('<%= cameledName %>', function () {
     // Service logic
     // ...
 
